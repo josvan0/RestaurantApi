@@ -1,0 +1,6 @@
+flask>=1.1.2
+flask-jsonpify>=1.5.0
+flask-restful>=0.3.8
+flask-sqlalchemy>=2.4.3
+pymysql>=0.9.3
+autopep8
