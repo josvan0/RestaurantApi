@@ -1,8 +1,8 @@
-#!../venv/bin/python
+#!./venv/bin/python
 # -*- coding: utf-8 -*-
 
 class Client:
-    def __init__(self, id=0, name='', phone='', username='', password=''):
+    def __init__(self, id=0, name='', phone=None, username='', password=''):
         self.id = id
         self.name = name
         self.phone = phone
@@ -49,7 +49,7 @@ class Client:
 
     @property.setter
     def phone(self, value):
-        if not isinstance(value, str):
+        if not isinstance(value, (str, None)):
             raise ValueError(
                 f'Excepted [str] in Client->phone. Value: {value}')
         self._phone = value
