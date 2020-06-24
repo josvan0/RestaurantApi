@@ -1,13 +1,13 @@
 #!./venv/bin/python
 # -*- coding: utf-8 -*-
 
+from configparser import ConfigParser
 import pymysql
-from configparser import SafeConfigParser
 
 
 # read configuration file
 CONFIG_SECTION = 'MYSQL_DATA'
-config = SafeConfigParser()
+config = ConfigParser()
 config.read('config.ini')
 
 if not config.has_section(CONFIG_SECTION):
@@ -19,6 +19,8 @@ for item in config.items(CONFIG_SECTION):
 
 # free memory
 del(config)
+del(CONFIG_SECTION)
+
 
 # decorator
 def connect_db(f):
