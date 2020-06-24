@@ -25,27 +25,18 @@ del(CONFIG_SECTION)
 # decorator
 def connect_db(f):
     def query():
-        conn = None
-        cur = None
+        connection = pymysql.connect(
+            host=mysql_data['host'],
+            user=mysql_data['user'],
+            passwd=mysql_data['password'],
+            db=mysql_data['database']
+        )
 
         try:
-            conn = pymysql.connect(
-                host=mysql_data['host'],
-                user=mysql_data['user'],
-                passwd=mysql_data['password'],
-                db=mysql_data['database']
-            )
-            cur = conn.cursor()
-            return f(cursor=cur)
-
+            with connection.cursor() as cursor:
+                return f(cursor)
         except pymysql.Error as e:
             print(f'PyMySQL ERROR [{e.args[0]}]: {e.args[1]}')
-
         finally:
-            print('cerrar')
-            if cur:
-                cur.close()
-            if conn:
-                conn.close()
-
+            connection.close()
     return query
