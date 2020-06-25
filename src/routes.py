@@ -10,13 +10,20 @@ from dbm.repositories import *
 
 server_config = get_config_section(section='SERVER_CONFIG')
 APPNAME = server_config['appname']
+PORT = server_config['port']
+VERSION = server_config['api_version']
 del(server_config)
 
 
 class Documentation(Resource):
     def get(self):
         return make_response(
-            render_template('index.html', appname=APPNAME),
+            render_template(
+                'index.html',
+                appname=APPNAME,
+                port=PORT,
+                version=VERSION
+                ),
             200,
             { 'Content-Type': 'text/html' }
         )
