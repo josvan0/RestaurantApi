@@ -194,9 +194,11 @@ class Order_Product:
 
 
 class Orders:
-    def __init__(self, id=0, client_id=0):
+    def __init__(self, id=0, client_id=0, total=0.0, confirmed=False):
         self.id = id
         self.client_id = client_id
+        self.total = total
+        self.confirmed = confirmed
 
     # ********** getters **********
 
@@ -207,6 +209,14 @@ class Orders:
     @property
     def client_id(self):
         return self._client_id
+
+    @property
+    def total(self):
+        return self._total
+
+    @property
+    def confirmed(self):
+        return self._confirmed
 
     # ********** setters **********
 
@@ -222,6 +232,20 @@ class Orders:
             raise ValueError(
                 f'Excepted [int] in Orders->client_id. Value: {value}')
         self._client_id = value
+
+    @total.setter
+    def total(self, value):
+        if not isinstance(value, float):
+            raise ValueError(
+                f'Excepted [float] in Sale->total. Value: {value}')
+        self._total = value
+
+    @confirmed.setter
+    def confirmed(self, value):
+        if not isinstance(value, bool):
+            raise ValueError(
+                f'Excepted [bool] in Orders->confirmed. Value: {value}')
+        self._confirmed = value
 
 
 class Product:
@@ -325,11 +349,10 @@ class ProductImage:
 
 
 class Sale:
-    def __init__(self, id=0, order_id=0, payment_method=0, total=0.0):
+    def __init__(self, id=0, order_id=0, payment_method=0):
         self.id = id
         self.order_id = order_id
         self.payment_method = payment_method
-        self.total = total
 
     # ********** getters **********
 
@@ -344,10 +367,6 @@ class Sale:
     @property
     def payment_method(self):
         return self._payment_method
-
-    @property
-    def total(self):
-        return self._total
 
     # ********** setters **********
 
@@ -370,10 +389,3 @@ class Sale:
             raise ValueError(
                 f'Excepted [int] in Sale->payment_method. Value: {value}')
         self._payment_method = value
-
-    @total.setter
-    def total(self, value):
-        if not isinstance(value, float):
-            raise ValueError(
-                f'Excepted [float] in Sale->total. Value: {value}')
-        self._total = value

@@ -1,25 +1,12 @@
 #!./venv/bin/python
 # -*- coding: utf-8 -*-
 
-from configparser import ConfigParser
 import pymysql
 
+from .utilities import get_config_section
 
-# read configuration file
-CONFIG_SECTION = 'MYSQL_DATA'
-config = ConfigParser()
-config.read('config.ini')
 
-if not config.has_section(CONFIG_SECTION):
-    exit(1)
-
-mysql_data = {}
-for item in config.items(CONFIG_SECTION):
-    mysql_data[item[0]] = item[1]
-
-# free memory
-del(config)
-del(CONFIG_SECTION)
+mysql_data = get_config_section(section='MYSQL_DATA')
 
 
 # decorator
