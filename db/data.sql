@@ -5,7 +5,7 @@ VALUES ('Entradas'),
     ('Postres'),
     ('Bebidas');
 -- load products
-LOAD DATA LOCAL INFILE 'C:\\Ivan\\Repos\\RestaurantApi\\db\\products.csv'
+LOAD DATA LOCAL INFILE 'products.csv'
     INTO TABLE Product
     FIELDS TERMINATED BY ','
     LINES TERMINATED BY '\n'
