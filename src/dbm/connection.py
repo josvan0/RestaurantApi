@@ -11,7 +11,7 @@ mysql_data = get_config_section(section='MYSQL_DATA')
 
 # decorator
 def connect_db(f):
-    def query():
+    def query(**kwargs):
         connection = pymysql.connect(
             host=mysql_data['host'],
             user=mysql_data['user'],
@@ -21,7 +21,7 @@ def connect_db(f):
 
         try:
             with connection.cursor() as cursor:
-                return f(cursor)
+                return f(cursor, **kwargs)
         except pymysql.Error as e:
             print(f'PyMySQL ERROR [{e.args[0]}]: {e.args[1]}')
         finally:

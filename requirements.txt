@@ -1,4 +1,5 @@
 flask>=1.1.2
+flask-httpauth>=4.1.0
 flask-jsonpify>=1.5.0
 flask-restful>=0.3.8
 pymysql>=0.9.3

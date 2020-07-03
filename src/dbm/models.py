@@ -37,6 +37,7 @@ class Category:
             'name': self.name
         }
 
+
 class Category_Product:
     def __init__(self, category_id=0, product_id=0):
         self.category_id = category_id
@@ -135,6 +136,15 @@ class Client:
             raise ValueError(
                 f'Excepted [str] in Client->password. Value: {value}')
         self._password = value
+    
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'phone': self.phone,
+            'username': self.username,
+            'password': self.password
+        }
 
 
 class Order_Product:
@@ -247,6 +257,14 @@ class Orders:
                 f'Excepted [bool] in Orders->confirmed. Value: {value}')
         self._confirmed = value
 
+    def json(self):
+        return {
+            'id': self.id,
+            'clientId': self.client_id,
+            'total': self.total,
+            'confirmed': self.confirmed
+        }
+
 
 class Product:
     def __init__(self, id=0, name='', description=None, price=0.0):
@@ -303,6 +321,14 @@ class Product:
                 f'Excepted [float] in Product->price. Value: {value}')
         self._price = value
 
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'price': self.price
+        }
+
 
 class ProductImage:
     def __init__(self, id=0, product_id=0, path=''):
@@ -347,6 +373,13 @@ class ProductImage:
                 f'Excepted [str] in ProductImage->path. Value: {value}')
         self._path = value
 
+    def json(self):
+        return {
+            'id': self.id,
+            'productId': self.product_id,
+            'path': self.path
+        }
+
 
 class Sale:
     def __init__(self, id=0, order_id=0, payment_method=0):
@@ -389,3 +422,10 @@ class Sale:
             raise ValueError(
                 f'Excepted [int] in Sale->payment_method. Value: {value}')
         self._payment_method = value
+
+    def json(self):
+        return {
+            'id': self.id,
+            'orderId': self.order_id,
+            'paymentMethod': self.payment_method
+        }
