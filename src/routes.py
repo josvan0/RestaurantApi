@@ -3,8 +3,6 @@
 
 from flask import (
     jsonify,
-    make_response,
-    render_template,
     request
 )
 
@@ -22,12 +20,6 @@ from dbm.repositories import *
 # --------------- init ---------------
 
 auth = HTTPBasicAuth()
-server_config = get_config_section(section='SERVER_CONFIG')
-APPNAME = server_config['appname']
-PORT = server_config['port']
-VERSION = server_config['api_version']
-del(server_config)
-
 
 # --------------- middlewares ---------------
 
@@ -38,20 +30,6 @@ def verify_password(username, password):
 
 
 # --------------- resources ---------------
-
-class Documentation(Resource):
-    def get(self):
-        return make_response(
-            render_template(
-                'index.html',
-                appname=APPNAME,
-                port=PORT,
-                version=VERSION
-                ),
-            200,
-            { 'Content-Type': 'text/html' }
-        )
-
 
 class Categories(Resource):
     def get(self):
