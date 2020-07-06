@@ -118,7 +118,9 @@ class Client:
 
     @phone.setter
     def phone(self, value):
-        if not isinstance(value, (str, None)):
+        if not value:
+            self._phone = None
+        elif not isinstance(value, str):
             raise ValueError(
                 f'Excepted [str] in Client->phone. Value: {value}')
         self._phone = value
@@ -309,7 +311,9 @@ class Product:
         
     @description.setter
     def description(self, value):
-        if not isinstance(value, (str, None)):
+        if not value:
+            self._description = None
+        elif not isinstance(value, str):
             raise ValueError(
                 f'Excepted [str] in Product->description. Value: {value}')
         self._description = value

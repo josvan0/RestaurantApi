@@ -3,6 +3,8 @@
 
 import pymysql
 
+from werkzeug.security import generate_password_hash
+
 from .connection import connect_db
 from .models import *
 
@@ -29,6 +31,44 @@ class ClientRepository:
                        WHERE username = %s""", (username,))
         row = cursor.fetchone()
         return row[0] if row else ''
+    
+    @staticmethod
+    @connect_db
+    def create_client(cursor=None, client=None):
+        cursor.execute("""INSERT INTO Client (name, phone, username, password)
+                       VALUES (%s, %s, %s, %s)""", (
+                           client.name,
+                           client.phone,
+                           client.username,
+                           generate_password_hash(client.password),
+                       ))
+        return cursor.lastrowid
+    
+    @staticmethod
+    @connect_db
+    def update_client(cursor=None, client=None):
+        cursor.execute("""UPDATE Client SET name = %s, phone = %s
+                       WHERE id = %s""", (client.name, client.phone, client.id,))
+        return True
+    
+    @staticmethod
+    @connect_db
+    def update_password(cursor=None, client=None):
+        cursor.execute("""UPDATE Client SET password = %s
+                       WHERE id = %s""", (client.password, client.id,))
+        
+    @staticmethod
+    @connect_db
+    def get_client_by_id(cursor=None, id=None):
+        cursor.execute("""SELECT * FROM Client
+                       WHERE id = %s""", (id,))
+        row = cursor.fetchone()
+        return Client(
+            id=int(row[0]),
+            name=row[1],
+            phone=row[2],
+            username=row[3]
+        ) if row else Client()
 
 
 class OrdersRepository:
@@ -67,3 +107,20 @@ class ProductRepository:
             )
             for row in cursor.fetchall()
         ]
+
+
+class ProductImageRepository:
+    @staticmethod
+    @connect_db
+    def get_product_image_ids_by_product_id(cursor=None, product_id=None):
+        cursor.execute("""SELECT id FROM ProductImage
+                       WHERE productId = %s""", (product_id,))
+        return [ int(row[0]) for row in cursor.fetchall() ]
+    
+    @staticmethod
+    @connect_db
+    def get_product_image_path_by_id(cursor=None, id=None):
+        cursor.execute("""SELECT path FROM ProductImage
+                       WHERE id = %s""", (id,))
+        row = cursor.fetchone()
+        return row[0] if row else None
