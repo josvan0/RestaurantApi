@@ -144,8 +144,7 @@ class Client:
             'id': self.id,
             'name': self.name,
             'phone': self.phone,
-            'username': self.username,
-            'password': self.password
+            'username': self.username
         }
 
 

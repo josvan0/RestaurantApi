@@ -3,8 +3,6 @@
 
 import pymysql
 
-from werkzeug.security import generate_password_hash
-
 from .connection import connect_db
 from .models import *
 
@@ -40,7 +38,7 @@ class ClientRepository:
                            client.name,
                            client.phone,
                            client.username,
-                           generate_password_hash(client.password),
+                           client.password,
                        ))
         return cursor.lastrowid
     
@@ -49,7 +47,6 @@ class ClientRepository:
     def update_client(cursor=None, client=None):
         cursor.execute("""UPDATE Client SET name = %s, phone = %s
                        WHERE id = %s""", (client.name, client.phone, client.id,))
-        return True
     
     @staticmethod
     @connect_db

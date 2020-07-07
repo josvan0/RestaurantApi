@@ -16,7 +16,8 @@ def connect_db(f):
             host=mysql_data['host'],
             user=mysql_data['user'],
             passwd=mysql_data['password'],
-            db=mysql_data['database']
+            db=mysql_data['database'],
+            autocommit=True
         )
 
         try:
