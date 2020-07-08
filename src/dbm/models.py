@@ -149,11 +149,12 @@ class Client:
 
 
 class Order_Product:
-    def __init__(self, id=0, order_id=0, product_id=0, quantity=0):
+    def __init__(self, id=0, order_id=0, product_id=0, quantity=0, order=None, product=None):
         self.id = id
         self.order_id = order_id
         self.product_id = product_id
         self.quantity = quantity
+        self.product = product
 
     # ********** getters **********
 
@@ -172,6 +173,10 @@ class Order_Product:
     @property
     def quantity(self):
         return self._quantity
+
+    @property
+    def product(self):
+        return self._product
 
     # ********** setters **********
 
@@ -202,14 +207,31 @@ class Order_Product:
             raise ValueError(
                 f'Excepted [int] in Order_Product->quantity. Value: {value})')
         self._quantity = value
+        
+    @product.setter
+    def product(self, value):
+        if not isinstance(value, Product):
+            raise ValueError(
+                f'Excepted object [Product] in Order_Product->product. Value type: {type(value)})')
+        self._product = value
+        
+    def json(self):
+        return {
+            'id': self.id,
+            'orderId': self.order_id,
+            'productId': self.product_id,
+            'quantity': self.quantity,
+            'product': self.product.json()
+        }
 
 
 class Orders:
-    def __init__(self, id=0, client_id=0, total=0.0, confirmed=False):
+    def __init__(self, id=0, client_id=0, total=0.0, confirmed=False, paid=False):
         self.id = id
         self.client_id = client_id
         self.total = total
         self.confirmed = confirmed
+        self.paid = paid
 
     # ********** getters **********
 
@@ -228,6 +250,10 @@ class Orders:
     @property
     def confirmed(self):
         return self._confirmed
+    
+    @property
+    def paid(self):
+        return self._paid
 
     # ********** setters **********
 
@@ -257,13 +283,21 @@ class Orders:
             raise ValueError(
                 f'Excepted [bool] in Orders->confirmed. Value: {value}')
         self._confirmed = value
+    
+    @paid.setter
+    def paid(self, value):
+        if not isinstance(value, bool):
+            raise ValueError(
+                f'Excepted [bool] in Orders->confirmed. Value: {value}')
+        slef._paid = value            
 
     def json(self):
         return {
             'id': self.id,
             'clientId': self.client_id,
             'total': self.total,
-            'confirmed': self.confirmed
+            'confirmed': self.confirmed,
+            'paid': self.paid
         }
 
 

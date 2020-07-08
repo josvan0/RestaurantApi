@@ -42,6 +42,19 @@ def make_bad_format_response(message):
     })
 
 
+def update_total_order(orderId, total):
+    try:
+        order_to_update = Orders(
+            id=orderId,
+            total=float(total)
+        )
+            
+        OrdersRepository.update_total_order(order=order_to_update)
+        return jsonify({ 'message': 'Order updated successfully' })
+    except ValueError as ex:
+        return make_bad_format_response(str(ex))
+
+
 # --------------- resources ---------------
 
 class Categories(Resource):
@@ -118,6 +131,33 @@ class Images(Resource):
                 image_path,
                 mimetype='image/jpg'
             ) if image_path else jsonify({ 'message': 'Image not found' })
+
+
+class ClientOrders(Resource):
+    @auth.login_required
+    def get(self, clientId, orderId=None):
+        if orderId:
+            order = OrdersRepository.get_detail_order_by_id(order_id=orderId)
+            return jsonify(order.json())
+        else:
+            orders_list = OrdersRepository.get_orders_confirmed_by_client_id(client_id=clientId)
+            return jsonify([ order.json() for order in orders_list ])
+
+    @auth.login_required
+    def put(self, clientId, orderId):
+        action = request.json.get('action')
+        if action == 'update':
+            update_total_order(orderId, request.json.get('total'))
+
+
+class OrderActive(Resource):
+    @auth.login_required
+    def get(self, clientId):
+        active_order = OrdersRepository.get_active_order_by_client_id(client_id=clientId)
+        if active_order.id == 0:
+            active_order.client_id = clientId
+            active_order.id = OrdersRepository.create_order(order=active_order)
+        return jsonify(active_order.json())
 
 
 class Products(Resource):

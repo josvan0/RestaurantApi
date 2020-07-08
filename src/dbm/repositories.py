@@ -73,7 +73,8 @@ class OrdersRepository:
     @connect_db
     def get_orders_confirmed_by_client_id(cursor=None, client_id=None):
         cursor.execute("""SELECT id, total FROM Orders
-                       WHERE confirmed = 1 AND clientId = %s""", (client_id,))
+                       WHERE confirmed = 1 AND paid = 0
+                       AND clientId = %s""", (client_id,))
         return [
             Orders(
                 id=int(row[0]),
@@ -81,6 +82,69 @@ class OrdersRepository:
             )
             for row in cursor.fetchall()
         ]
+    
+    @staticmethod
+    @connect_db
+    def get_detail_order_by_id(cursor=None, order_id=None):
+        cursor.execute("""SELECT p.Id, p.name, p.description, p.price, op.quantity
+                       FROM Order_Product AS op
+                       INNER JOIN Product AS p
+                       ON op.productId = p.Id
+                       WHERE op.orderId = %s""", (order_id,))
+        return [
+            Order_Product(
+                quantity=int(row[4]),
+                product=Product(
+                    id=int(row[0]),
+                    name=row[1],
+                    description=row[2],
+                    price=float(row[3])
+                )
+            )
+            for row in cursor.fetchall()
+        ]
+
+    @staticmethod
+    @connect_db
+    def get_active_order_by_client_id(cursor=None, client_id=None):
+        cursor.execute("""SELECT id, total FROM Orders
+                       WHERE confirmed = 0 AND paid = 0
+                       AND clientId = %s""", (client_id,))
+        row = cursor.fetchone()
+        return Orders(
+            id=int(row[0]),
+            total=float(row[1])
+        ) if row else Orders()
+    
+    @staticmethod
+    @connect_db
+    def create_order(cursor=None, order=None):
+        cursor.execute("""INSERT INTO Orders (clientId, total, confirmed, paid)
+                       VALUES (%s, %s, %s, %s)""",(
+                           order.client_id,
+                           order.total,
+                           order.confirmed,
+                           order.paid,
+                       ))
+        return cursor.lastrowid
+
+    @staticmethod
+    @connect_db
+    def update_total_order(cursor=None, order=None):
+        cursor.execute("""UPDATE Orders SET total = %s
+                       WHERE id = %s""", (order.total, order.id,))
+
+    @staticmethod
+    @connect_db
+    def confirm_order(cursor=None, order_id=None):
+        cursor.execute("""UPDATE Orders SET confirmed = 1
+                       WHERE id = %s""", (order_id,))
+
+    @staticmethod
+    @connect_db
+    def pay_order(cursor=None, order_id=None):
+        cursor.execute("""UPDATE Orders SET paid = 1
+                       WHERE id = %s""", (order_id,))
 
 
 class ProductRepository:
