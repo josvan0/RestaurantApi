@@ -147,6 +147,49 @@ class OrdersRepository:
                        WHERE id = %s""", (order_id,))
 
 
+class OrderProductRepository:
+    @staticmethod
+    @connect_db
+    def create_order_product(cursor=None, order_product=None):
+        cursor.execute("""INSERT INTO Order_Product (orderId, productId, quantity)
+                       VALUES (%s, %s, %s)""", (
+                           order_product.order_id,
+                           order_product.product_id,
+                           order_product.quantity,
+                       ))
+        return cursor.lastrowid
+    
+    @staticmethod
+    @connect_db
+    def get_order_product_by_ids(cursor=None, order_product=None):
+        cursor.execute("""SELECT * FROM Order_Product
+                       WHERE orderId = %s AND productId = %s""",
+                       (order_product.order_id,
+                        order_product.product_id,))
+        row = cursor.fetchone()
+        return Order_Product(
+            id=int(row[0]),
+            order_id=int(row[1]),
+            product_id=int(row[2]),
+            quantity=int(row[3])
+        ) if row else Order_Product()
+
+    @staticmethod
+    @connect_db
+    def update_product_quantity(cursor=None, order_product=None):
+        cursor.execute("""UPDATE Order_Product SET quantity = %s
+                       WHERE order_id = %s AND product_id = %s""",
+                       (order_product.quantity,
+                        order_product.order_id,
+                        order_product.product_id,))
+
+    @staticmethod
+    @connect_db
+    def delete_order_product_by_id(cursor=None, order_product_id=None):
+        cursor.execute("""DELETE FROM Order_Product
+                       WHERE id = %s""", (order_product_id,))
+
+
 class ProductRepository:
     @staticmethod
     @connect_db
@@ -185,3 +228,15 @@ class ProductImageRepository:
                        WHERE id = %s""", (id,))
         row = cursor.fetchone()
         return row[0] if row else None
+
+
+class SaleRepository:
+    @staticmethod
+    @connect_db
+    def create_sale(cursor=None, sale=None):
+        cursor.execute("""INSERT INTO Sale (orderId, paymentMethod)
+                       VALUES (%s, %s)""", (
+                           sale.order_id,
+                           sale.payment_method,
+                       ))
+        return cursor.lastrowid

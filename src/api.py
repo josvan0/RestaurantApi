@@ -31,7 +31,7 @@ api.add_resource(Images, f'{API_NAMESPACE}/images/<int:imageId>', endpoint='imag
 api.add_resource(
     ClientOrders,
     f'{API_NAMESPACE}/clients/<int:clientId>/orders',
-    f'{API_NAMESPACE}/clients/<int:clientId>/orders/<int:orderId>'
+    f'{API_NAMESPACE}/clients/<int:clientId>/orders/<int:orderId>',
     endpoint='orders'
 )
 api.add_resource(OrderActive, f'{API_NAMESPACE}/clients/<int:clientId>/orders/active', endpoint='orderActive')

@@ -42,10 +42,10 @@ def make_bad_format_response(message):
     })
 
 
-def update_total_order(orderId, total):
+def update_total_order(order_id, total):
     try:
         order_to_update = Orders(
-            id=orderId,
+            id=order_id,
             total=float(total)
         )
             
@@ -53,6 +53,49 @@ def update_total_order(orderId, total):
         return jsonify({ 'message': 'Order updated successfully' })
     except ValueError as ex:
         return make_bad_format_response(str(ex))
+
+
+def confirm_order(order_id):
+    OrdersRepository.confirm_order(order_id=order_id)
+    return jsonify({ 'message': 'Order confirmed successfully' })
+
+
+def pay_order(order_id, payment_method):
+    try:
+        OrderRepository.pay_order(order_id=order_id)
+        new_sale = Sale(
+            order_id=order_id,
+            payment_method=payment_method
+        )
+        sale_id = SaleRepository.create_sale(sale=new_sale)
+        return jsonify({
+            'message': 'Order paid successfully',
+            "saleId": sale_id
+        })
+    except ValueError as ex:
+        return make_bad_format_response(str(ex))
+
+
+def update_order_products(movement):
+    if not movement:
+        return make_bad_format_response('Movement body is required to do a order movement')
+    
+    order_product_update = Order_Product(
+        order_id=int(movement.get('orderId')),
+        product_id=int(movement.get('productId')),
+        quantity=int(movement.get('quantity'))
+    )
+    order_product_update.id = OrderProductRepository.get_order_product_by_ids(order_product=order_product_update)
+    
+    if order_product_update.quantity == 0:
+        OrderProductRepository.delete_order_product_by_id(order_id=order_product_update.order_id)
+        return jsonify({ 'message': 'Product removed from order successfully' })
+    elif order_product_update.id == 0:
+        OrderProductRepository.create_order_product(order_product=order_product_update)
+        return jsonify({ 'message': 'Product added to order successfully' })
+    else:
+        OrderProductRepository.update_product_quantity(order_product=order_product_update)
+        return jsonify({ 'message': 'Product updated to order successfully' })
 
 
 # --------------- resources ---------------
@@ -147,7 +190,15 @@ class ClientOrders(Resource):
     def put(self, clientId, orderId):
         action = request.json.get('action')
         if action == 'update':
-            update_total_order(orderId, request.json.get('total'))
+            return update_total_order(orderId, request.json.get('total'))
+        elif action == 'confirm':
+            return confirm_order(orderId)
+        elif action == 'pay':
+            return pay_order(orderId)
+        elif action == 'update_products':
+            return update_order_products(request.json.get('movement'))
+        else:
+            return make_bad_format_response('Action not found or unavailable')
 
 
 class OrderActive(Resource):

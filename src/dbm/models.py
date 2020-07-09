@@ -149,7 +149,7 @@ class Client:
 
 
 class Order_Product:
-    def __init__(self, id=0, order_id=0, product_id=0, quantity=0, order=None, product=None):
+    def __init__(self, id=0, order_id=0, product_id=0, quantity=0, product=None):
         self.id = id
         self.order_id = order_id
         self.product_id = product_id
