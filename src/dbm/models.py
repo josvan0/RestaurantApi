@@ -210,7 +210,9 @@ class Order_Product:
         
     @product.setter
     def product(self, value):
-        if not isinstance(value, Product):
+        if not value:
+            self._product = None
+        elif not isinstance(value, Product):
             raise ValueError(
                 f'Excepted object [Product] in Order_Product->product. Value type: {type(value)})')
         self._product = value
@@ -289,7 +291,7 @@ class Orders:
         if not isinstance(value, bool):
             raise ValueError(
                 f'Excepted [bool] in Orders->confirmed. Value: {value}')
-        slef._paid = value            
+        self._paid = value            
 
     def json(self):
         return {

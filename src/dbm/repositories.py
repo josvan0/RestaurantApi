@@ -161,24 +161,19 @@ class OrderProductRepository:
     
     @staticmethod
     @connect_db
-    def get_order_product_by_ids(cursor=None, order_product=None):
-        cursor.execute("""SELECT * FROM Order_Product
+    def get_order_product_id(cursor=None, order_product=None):
+        cursor.execute("""SELECT id FROM Order_Product
                        WHERE orderId = %s AND productId = %s""",
                        (order_product.order_id,
                         order_product.product_id,))
         row = cursor.fetchone()
-        return Order_Product(
-            id=int(row[0]),
-            order_id=int(row[1]),
-            product_id=int(row[2]),
-            quantity=int(row[3])
-        ) if row else Order_Product()
+        return int(row[0]) if row else 0
 
     @staticmethod
     @connect_db
     def update_product_quantity(cursor=None, order_product=None):
         cursor.execute("""UPDATE Order_Product SET quantity = %s
-                       WHERE order_id = %s AND product_id = %s""",
+                       WHERE orderId = %s AND productId = %s""",
                        (order_product.quantity,
                         order_product.order_id,
                         order_product.product_id,))
